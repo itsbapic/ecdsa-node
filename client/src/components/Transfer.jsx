@@ -1,12 +1,12 @@
 import { useState } from "react";
-import server from "./server";
+import server from "../server";
 
 function Transfer({ address, setBalance }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
-
+  const generatedSignature = "0"
   async function transfer(evt) {
     evt.preventDefault();
 
@@ -47,6 +47,7 @@ function Transfer({ address, setBalance }) {
       </label>
 
       <input type="submit" className="button" value="Transfer" />
+      <div className="balance">Generated Signature: {generatedSignature}</div>
     </form>
   );
 }
