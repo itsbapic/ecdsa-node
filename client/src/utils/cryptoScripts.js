@@ -7,6 +7,19 @@ const getAddress = (publicKey) => {
     return toHex(hash.slice(-20)).toUpperCase();
 };
 
+
+const generateKey = () => {
+    const privateKey = secp.utils.randomPrivateKey();
+    // console.log(privateKey)
+    console.log(`private key: ${toHex(privateKey)}`)
+    const publicKey = secp.getPublicKey(privateKey);
+    return {
+        private: privateKey,
+        public: getAddress(publicKey)
+    }
+}
+
+
 const hashMessage = (message) => keccak256(Uint8Array.from(message));
 
 const sign = async (privKey, message) => {
@@ -19,6 +32,7 @@ const sign = async (privKey, message) => {
 };
 
 const scripts = {
+    generateKey,
     getAddress,
     hashMessage,
     sign

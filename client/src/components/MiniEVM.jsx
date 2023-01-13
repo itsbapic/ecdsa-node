@@ -2,15 +2,19 @@ import server from "../server";
 import * as secp from "ethereum-cryptography/secp256k1";
 import { hexToBytes, toHex } from "ethereum-cryptography/utils"
 import { keccak256 } from "ethereum-cryptography/keccak"
+import scripts from "../utils/cryptoScripts" 
 
 
 function MiniEVM({ address, setAddress, balance, setBalance, pubKey, setPubKey, privKey, setPrivKey }) {
 
-    const generateAddress = () => {}
+    const newAddress = (balance) => {
+      const {privateKey, publicKey} = scripts.generateKey();
+      console.log(`priv: ${privateKey}\n pub: ${publicKey}`)
+    }
   return (
     <div className="container miniEVM">
       <h1>bapic's MiniEVM™️</h1>
-      <form className="container transfer" onSubmit={generateAddress}>
+      <form className="container transfer" onSubmit={newAddress(balance)}>
       <h2>Generate Address</h2>
 
       <label>
@@ -23,14 +27,8 @@ function MiniEVM({ address, setAddress, balance, setBalance, pubKey, setPubKey, 
       </label>
 
       <input type="submit" className="button" value="Generate" />
-      {/* <div className="balance">Generated Signature: {generatedSignature}</div> */}
     </form>
-    
-      <a className="balance" href={`https://etherscan.io/address/${address}`} target="_blank">
-      <div href={`https://etherscan.io/address/${address}`}>Address: {address}</div>
-      </a>
       <input type="submit" className="button" value={`ADDRESS: ${address}0x213234234... BALANCE: ${balance}`} />
-      <div className="balance">Balance: {balance}</div>
     </div>
   );
 }
