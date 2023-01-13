@@ -1,20 +1,32 @@
 import { useState } from "react";
 import server from "../server";
+import { keccak256 } from "ethereum-cryptography/keccak"
+import * as secp from "ethereum-cryptography/secp256k1";
 
-function Transfer({ address, setBalance }) {
+import scripts from "../utils/cryptoScripts"
+
+function Transfer({ address, setBalance, privKey }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
-  const generatedSignature = "0"
+  
+  
   async function transfer(evt) {
     evt.preventDefault();
-
+    const message = `${address} sends ${sendAmount} to ${recipient}`
+    console.log(message)
+    const messageHash = scripts.hashMessage(message);
+    console.log(messageHash)
+    // TODO: PRIVATE KEY
+    const signature = scripts.sign(privKey, messageHash)
+    console.log(signature);
     try {
       const {
         data: { balance },
       } = await server.post(`send`, {
-        sender: address,
+        signature: signature,
+        message: message,
         amount: parseInt(sendAmount),
         recipient,
       });
@@ -47,7 +59,7 @@ function Transfer({ address, setBalance }) {
       </label>
 
       <input type="submit" className="button" value="Transfer" />
-      <div className="balance">Generated Signature: {generatedSignature}</div>
+      {/* <div className="balance">Generated Signature: {signature}</div> */}
     </form>
   );
 }

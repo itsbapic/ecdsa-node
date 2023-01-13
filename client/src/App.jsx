@@ -24,7 +24,7 @@ function App() {
         privKey={privKey}
         setPrivKey={setPrivKey}
       />
-      <Transfer setBalance={setBalance} address={address} />
+      <Transfer setBalance={setBalance} address={address} privKey={privKey}/>
       <br/>
       <MiniEVM />
 

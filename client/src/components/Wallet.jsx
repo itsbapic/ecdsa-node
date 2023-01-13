@@ -18,15 +18,14 @@ function Wallet({ address, setAddress, balance, setBalance, pubKey, setPubKey, p
     // If the data is a valid private key
     if(privKey.length == 64) {
       const pubKey = secp.getPublicKey(privKey);
-      pubKey ? setPubKey(toHex(pubKey)) : setPubKey("")
 
       // If there is a known associated public key (in our server balances object) 
       if (pubKey) {
+        const address = getAddress(pubKey);
         const {
           data: { balance },
-        } = await server.get(`balance/${toHex(pubKey)}`);
+        } = await server.get(`balance/${address}`);
         setBalance(balance);
-        const address = getAddress(pubKey);
         setAddress(address)
       } else {
         setBalance(0);
@@ -36,9 +35,6 @@ function Wallet({ address, setAddress, balance, setBalance, pubKey, setPubKey, p
       setBalance(0);
       setAddress("");
     }
-
-    
-    
   }
 
   return (
@@ -50,7 +46,7 @@ function Wallet({ address, setAddress, balance, setBalance, pubKey, setPubKey, p
         <input placeholder="Enter a private key" value={privKey} onChange={onChange}></input>
       </label>
       <a className="balance" href={`https://etherscan.io/address/${address}`} target="_blank">
-      <div href={`https://etherscan.io/address/${address}`}>Address: {address}</div>
+      <div href={`https://etherscan.io/address/${address}`}>Address: {address.slice(0,10)}...</div>
 
       </a>
       <div className="balance">Balance: {balance}</div>
