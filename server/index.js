@@ -3,15 +3,15 @@ const app = express();
 const cors = require("cors");
 const port = 3042;
 
-const { hashMessage, signatureToPubKey } = require("./utils/cryptoScripts")
+const { signatureToPubKey } = require("./utils/cryptoScripts")
 
 app.use(cors());
 app.use(express.json());
 
 const balances = {
-  "0x99153b7bcad5762ca765363cf452b6cb49e1fafc": 100,
-  "0xb073e367b6f24a92e2742bd85a6b9b4ed2984801": 50,
-  "0x4084c6a22e7e0a76e017bde3faebb2a5ca2464e5": 75,
+  "0xe937a7be83f0d58de25d74b3c732b9c8e1e9d24f": 100,
+  "0xdd19514ac4189464bf1cace0f37c6c2420b17dcd": 50,
+  "0xe762aab006d2746c23f04ee102bed5e216ee01ab": 75,
 };
 
 app.get("/balance/:address", (req, res) => {
@@ -20,20 +20,20 @@ app.get("/balance/:address", (req, res) => {
   res.send({ balance });
 });
 
-// app.post("/balance/:address", (req, res) => {
-//   const { address, balance } = req.body;
-//   balances[address] = balance;
-//   res.send(`Address ${address} added!`)
-// })
 
 app.post("/send", (req, res) => {
   // get a signature from the client
-  const { signature, message, amount, recipient } = req.body;
+  const { signature, message } = req.body;
+
+  const { amount, recipient } = message;
+
+  console.log(`signature: ${signature}\nmessage: ${message}\namount: ${amount}\nrecipient: ${recipient}`);
+
 
   // recover the address from the signature (to be sender)
   const sender = signatureToPubKey(message, signature)
 
-  console.log(sender);
+  console.log(`sender: ${sender}`);
 
   setInitialBalance(sender);
   setInitialBalance(recipient);

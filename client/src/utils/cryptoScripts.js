@@ -1,6 +1,6 @@
 import * as secp from "ethereum-cryptography/secp256k1";
 import { keccak256 } from "ethereum-cryptography/keccak";
-import { hexToBytes, toHex } from "ethereum-cryptography/utils";
+import { toHex } from "ethereum-cryptography/utils";
 
 const getAddress = (publicKey) => {
     const hash = keccak256(publicKey.slice(1));
