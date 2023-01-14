@@ -1,34 +1,63 @@
+import { useState, useEffect } from "react";
 import server from "../server";
-import * as secp from "ethereum-cryptography/secp256k1";
-import { hexToBytes, toHex } from "ethereum-cryptography/utils"
-import { keccak256 } from "ethereum-cryptography/keccak"
 import scripts from "../utils/cryptoScripts" 
 
 
-function MiniEVM({ address, setAddress, balance, setBalance, pubKey, setPubKey, privKey, setPrivKey }) {
+function MiniEVM({ }) {
+  const [generatedBalance, setGeneratedBalance] = useState("");
+  const [generatedBalances, setGeneratedBalances] = useState([]);
+  const [newGenAddress, setNewGenAddress] = useState({});
 
-    const newAddress = (balance) => {
-      const {privateKey, publicKey} = scripts.generateKey();
-      console.log(`priv: ${privateKey}\n pub: ${publicKey}`)
+  const newAddress = (evt) => {
+    evt.preventDefault();
+
+    const {privateKey, publicKey} = scripts.generateKey();
+    setNewGenAddress({
+      privateKey: privateKey,
+      publicKey: publicKey,
+      balance: generatedBalance
+    });
+  }
+   useEffect(() => {
+    if(newGenAddress.publicKey) {
+      setGeneratedBalances(prevBalances => [...prevBalances, newGenAddress]);
+      server.post("addBalance", {
+        address: newGenAddress.publicKey,
+        balance: parseInt(newGenAddress.balance)
+      }).catch(ex => alert(ex.response.data.message));
     }
+  }, [newGenAddress])
+
+  // Function to copy the clicked value to the clipboard
+  const handleClick = (value) => {
+    navigator.clipboard.writeText(value);
+  }
+
   return (
     <div className="container miniEVM">
       <h1>bapic's MiniEVM™️</h1>
-      <form className="container transfer" onSubmit={newAddress(balance)}>
-      <h2>Generate Address</h2>
+      <form className="container generateAddress" onSubmit={newAddress}>
+        <h2>Generate Address</h2>
+        <label>
+          Address Balance
+          <input
+            placeholder="1, 2, 3..."
+            value={generatedBalance}
+            onChange={e => setGeneratedBalance(e.target.value)}
+            required={true}
+          ></input>
+        </label>
+        <input type="submit" className="button" value="Generate" />
+      </form>
 
-      <label>
-        Address Balance
-        <input
-          placeholder="1, 2, 3..."
-          // value={sendAmount}
-          // onChange={setValue(setSendAmount)}
-        ></input>
-      </label>
-
-      <input type="submit" className="button" value="Generate" />
-    </form>
-      <input type="submit" className="button" value={`ADDRESS: ${address}0x213234234... BALANCE: ${balance}`} />
+      {generatedBalances.map((newAddress, index) => {
+        return (
+          <div key={index} className="address-group">
+            <p>PRIVKEY: <button className="button" onClick={() => handleClick(newAddress.privateKey)}>{newAddress.privateKey.slice(0,10)}...</button></p>
+            <p>ADDRESS: <button className="button" onClick={() => handleClick(newAddress.publicKey)}>{newAddress.publicKey.slice(0,10)}...</button></p>
+          </div>
+        )
+      })}
     </div>
   );
 }

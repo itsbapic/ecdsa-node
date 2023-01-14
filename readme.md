@@ -29,3 +29,15 @@ The server folder contains a node.js server using [express](https://expressjs.co
 The application should connect to the default server port (3042) automatically! 
 
 _Hint_ - Use [nodemon](https://www.npmjs.com/package/nodemon) instead of `node` to automatically restart the server on any changes.
+
+### How I acheived the goals of this project, and my approach!
+
+
+#### Private keys and signatures 
+Seeing that this was the first time really getting into cryptography, dealing with different datatypes was a huge curveball. This project uses a signature algorithm from the private key of the sender, and a message from that sender, that can then be securly sent over a network to relay the message, while still keeping the private key intact and secure.
+
+#### Server-side addresses & React State Managment
+I very quickly got very tired of constantly generating new private keys, and associated public keys. Instead, I created a client-side key generator, that would then push the public key, with the balance amount, to the server. Private keys are kept client-side to not expose them.
+
+PS: React state management is less than ideal.
+

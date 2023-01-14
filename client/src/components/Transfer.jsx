@@ -1,17 +1,14 @@
 import { useState } from "react";
 import server from "../server";
-import { keccak256 } from "ethereum-cryptography/keccak"
 import { hexToBytes } from "ethereum-cryptography/utils"
-import * as secp from "ethereum-cryptography/secp256k1";
 
 import scripts from "../utils/cryptoScripts"
 
-function Transfer({ address, setBalance, privKey }) {
+function Transfer({ setBalance, privKey }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
-  
   
   async function transfer(evt) {
     evt.preventDefault();
@@ -19,11 +16,7 @@ function Transfer({ address, setBalance, privKey }) {
         amount: parseInt(sendAmount),
         recipient: recipient
     }
-    // console.log(message)
-    // console.log(messageHash)
-    // TODO: PRIVATE KEY
     const signature = await scripts.sign(hexToBytes(privKey), message)
-    // console.log(signature);
     try {
       const {
         data: { balance },
